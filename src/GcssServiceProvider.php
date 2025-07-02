@@ -9,7 +9,9 @@ use Governetix\Gcss\View\Components\VisualHeading;
 use Governetix\Gcss\View\Components\VisualCard;
 use Governetix\Gcss\View\Components\VisualSection;
 use Governetix\Gcss\View\Components\VisualFlexGrid;
-use Governetix\Gcss\View\Components\VisualDivider; // Importar el nuevo componente VisualDivider
+use Governetix\Gcss\View\Components\VisualDivider;
+use Governetix\Gcss\View\Components\VisualInfoBox;
+use Governetix\Gcss\View\Components\VisualDropdown; // Importar el nuevo componente VisualDropdown
 
 class GcssServiceProvider extends ServiceProvider
 {
@@ -72,7 +74,9 @@ class GcssServiceProvider extends ServiceProvider
         Blade::component('gcss-card', VisualCard::class);
         Blade::component('gcss-section', VisualSection::class);
         Blade::component('gcss-flex-grid', VisualFlexGrid::class);
-        Blade::component('gcss-divider', VisualDivider::class); // <--- ¡Registrar el nuevo componente!
+        Blade::component('gcss-divider', VisualDivider::class);
+        Blade::component('gcss-info-box', VisualInfoBox::class);
+        Blade::component('gcss-dropdown', VisualDropdown::class); // <--- ¡Registrar el nuevo componente!
     }
 }
 

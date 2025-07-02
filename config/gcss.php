@@ -80,7 +80,7 @@ return [
             'top-left-outside' => 'absolute -top-4 -left-4 transform -translate-x-1/2 -translate-y-1/2',
             'top-center-outside' => 'absolute -top-4 left-1/2 -translate-x-1/2 -translate-y-1/2',
             'bottom-right-outside' => 'absolute -bottom-4 -right-4 transform translate-x-1/2 translate-y-1/2',
-            'bottom-left-outside' => 'absolute -bottom-4 -left-4 transform -translate-x-1/2 -translate-y-1/2',
+            'bottom-left-outside' => 'absolute -bottom-4 -left-4 transform -translate-x-1/2 translate-y-1/2',
             'bottom-center-outside' => 'absolute -bottom-4 left-1/2 -translate-x-1/2 translate-y-1/2',
         ],
     ],
@@ -122,6 +122,60 @@ return [
             'shadow' => 'shadow-sm',
             'icon_size' => 'text-lg',
             'icon_color' => 'text-gray-500',
+        ],
+    ],
+    'info_boxes' => [
+        'default_type' => 'info', // Tipo por defecto (info, success, warning, danger)
+        'default_padding' => 'p-4',
+        'default_rounded' => 'rounded-md',
+        'default_shadow' => 'shadow-sm',
+        'types' => [
+            'info' => [
+                'bg' => 'bg-blue-100',
+                'text' => 'text-blue-800',
+                'border' => 'border border-blue-400',
+                'icon' => 'fas fa-info-circle',
+                'icon_color' => 'text-blue-500',
+            ],
+            'success' => [
+                'bg' => 'bg-green-100',
+                'text' => 'text-green-800',
+                'border' => 'border border-green-400',
+                'icon' => 'fas fa-check-circle',
+                'icon_color' => 'text-green-500',
+            ],
+            'warning' => [
+                'bg' => 'bg-yellow-100',
+                'text' => 'text-yellow-800',
+                'border' => 'border border-yellow-400',
+                'icon' => 'fas fa-exclamation-triangle',
+                'icon_color' => 'text-yellow-500',
+            ],
+            'danger' => [
+                'bg' => 'bg-red-100',
+                'text' => 'text-red-800',
+                'border' => 'border border-red-400',
+                'icon' => 'fas fa-times-circle',
+                'icon_color' => 'text-red-500',
+            ],
+        ],
+    ],
+    'dropdowns' => [
+        'default_trigger_type' => 'button', // 'button' o 'link'
+        'default_position' => 'bottom-left', // bottom-left, bottom-right, top-left, top-right
+        'default_offset' => 'mt-2', // Margen entre el trigger y el menú
+        'menu_defaults' => [
+            'bg' => 'bg-white',
+            'shadow' => 'shadow-lg',
+            'rounded' => 'rounded-md',
+            'border' => 'border border-gray-200',
+            'padding' => 'py-1', // Padding del menú en sí
+        ],
+        'item_defaults' => [
+            'text' => 'text-gray-700',
+            'hover_bg' => 'hover:bg-gray-100',
+            'hover_text' => 'hover:text-gray-900',
+            'padding' => 'px-4 py-2',
         ],
     ],
 ];
