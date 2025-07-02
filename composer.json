@@ -1,0 +1,25 @@
+{
+    "name": "governetix/gcss",
+    "description": "Paquete de componentes UI/UX para Laravel",
+    "type": "laravel-package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nesto",
+            "email": "nesto.sandoval@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Governetix\\Gcss\\": "src/"
+        }
+    },
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Governetix\\Gcss\\GcssServiceProvider"
+            ]
+        }
+    }
+}
