@@ -178,5 +178,28 @@ return [
             'padding' => 'px-4 py-2',
         ],
     ],
+    'navbar' => [
+        'default_bg_color' => 'bg-white',
+        'default_text_color' => 'text-gray-900',
+        'default_padding' => 'py-4 px-4 sm:px-6 lg:px-8',
+        'default_shadow' => 'shadow-md',
+        'default_height' => 'h-16',
+        'default_link_text_color' => 'text-gray-700',
+        'default_link_hover_text_color' => 'hover:text-blue-600',
+        'default_link_padding' => 'px-3 py-2',
+        'default_link_rounded' => 'rounded-md',
+    ],
+    'sidebar' => [
+        'default_bg_color' => 'bg-gray-800',
+        'default_text_color' => 'text-white',
+        'default_width' => 'w-64',
+        'default_padding' => 'py-4 px-3',
+        'default_shadow' => 'shadow-lg',
+        'default_link_text_color' => 'text-gray-300',
+        'default_link_hover_bg' => 'hover:bg-gray-700',
+        'default_link_hover_text_color' => 'hover:text-white',
+        'default_link_padding' => 'py-2 px-3',
+        'default_link_rounded' => 'rounded-md',
+    ],
 ];
 
