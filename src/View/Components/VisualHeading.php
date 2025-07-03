@@ -6,9 +6,9 @@ use Illuminate\View\Component;
 
 class VisualHeading extends Component
 {
-    public $level; // Para h1, h2, h3, etc.
-    public $content; // El texto del encabezado, si se pasa como prop
-    public $classes; // Clases de Tailwind CSS para el encabezado
+    public $level;
+    public $content;
+    public $classes;
 
     /**
      * Create a new component instance.
@@ -19,24 +19,20 @@ class VisualHeading extends Component
      */
     public function __construct($level = 1, $content = null)
     {
-        // Aseguramos que el nivel esté entre 1 y 6
         $this->level = max(1, min(6, $level));
         $this->content = $content;
 
-        // Definimos clases base de Tailwind CSS para cada nivel de encabezado
-        // Puedes personalizar esto en config/gcss.php si lo deseas, pero por ahora lo definimos aquí.
-        $baseClasses = [
-            1 => 'text-5xl font-extrabold leading-tight', // H1
-            2 => 'text-4xl font-bold leading-tight',      // H2
-            3 => 'text-3xl font-semibold leading-snug',   // H3
-            4 => 'text-2xl font-medium leading-normal',   // H4
-            5 => 'text-xl font-medium leading-relaxed',   // H5
-            6 => 'text-lg font-medium leading-relaxed',   // H6
-        ];
+        // Obtener la configuración de tipografía para este nivel de encabezado
+        $typographyConfig = config("gcss.typography.headings.h{$this->level}", []);
 
-        // Combinamos las clases base con cualquier clase adicional que se pueda definir en la configuración
-        // Por ahora, solo usamos las clases base. Más adelante, podríamos leer de config('gcss.typography.headings.h1')
-        $this->classes = $baseClasses[$this->level] . ' text-gray-900 dark:text-white'; // Color de texto por defecto
+        // Combinar las clases de tipografía con cualquier clase adicional que se pueda pasar
+        $this->classes = implode(' ', array_filter([
+            $typographyConfig['font_size'] ?? '',
+            $typographyConfig['font_weight'] ?? '',
+            $typographyConfig['line_height'] ?? '',
+            $typographyConfig['text_color'] ?? config('gcss.typography.default_text_color', 'text-gray-900'), // Fallback a color de texto global
+            config('gcss.typography.default_font_family', 'font-sans'), // Fuente global
+        ]));
     }
 
     /**

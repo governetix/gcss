@@ -16,8 +16,8 @@ class VisualCard extends Component
     public $iconPosition;
     public $bgImage;
     public $bgImageClasses;
-    public $iconCircle; // Nuevo: si el ícono debe estar dentro de un círculo
-    public $iconCirclePosition; // Nuevo: posición del círculo del ícono (ej. 'top-right-outside')
+    public $iconCircle;
+    public $iconCirclePosition;
 
     /**
      * Create a new component instance.
@@ -47,19 +47,18 @@ class VisualCard extends Component
         $iconPosition = null,
         $bgImage = null,
         $bgImageClasses = 'bg-cover bg-center',
-        $iconCircle = false, // Por defecto, el ícono no está en un círculo
+        $iconCircle = false,
         $iconCirclePosition = null
     ) {
-        // Obtener valores por defecto de la configuración
         $this->padding = $padding ?? config('gcss.cards.default_padding', 'p-6');
         $this->shadow = $shadow ?? config('gcss.cards.default_shadow', 'shadow-md');
         $this->rounded = $rounded ?? config('gcss.cards.default_rounded', 'rounded-lg');
         $this->bgColor = $bgColor ?? config('gcss.cards.default_bg_color', 'bg-white');
         $this->border = $border ?? config('gcss.cards.default_border', '');
-        $this->textColor = $textColor ?? config('gcss.cards.default_text_color', 'text-gray-900');
+        $this->textColor = $textColor ?? config('gcss.typography.default_text_color', 'text-gray-900');
 
         $this->icon = $icon;
-        $this->iconPosition = $iconPosition ?? ($icon ? 'left' : ''); // Por defecto 'left' si hay ícono y no hay posición específica
+        $this->iconPosition = $iconPosition ?? ($icon ? 'left' : '');
         $this->bgImage = $bgImage;
         $this->bgImageClasses = $bgImageClasses;
         $this->iconCircle = $iconCircle;
@@ -73,7 +72,6 @@ class VisualCard extends Component
      */
     public function render()
     {
-        // Clases base para la tarjeta
         $baseClasses = [
             $this->padding,
             $this->shadow,
@@ -82,7 +80,6 @@ class VisualCard extends Component
             $this->textColor,
         ];
 
-        // Añadir clases de fondo si no hay imagen de fondo, o si la imagen no cubre todo
         if (!$this->bgImage) {
             $baseClasses[] = $this->bgColor;
         } else {
@@ -90,13 +87,10 @@ class VisualCard extends Component
             $baseClasses[] = 'min-h-[150px]';
         }
 
-        // Unir todas las clases
         $classes = implode(' ', $baseClasses);
 
-        // Estilos en línea para la imagen de fondo
         $inlineStyle = $this->bgImage ? "background-image: url('{$this->bgImage}');" : '';
 
-        // Clases para el círculo del ícono si iconCircle es true
         $iconCircleClasses = '';
         if ($this->iconCircle) {
             $iconCircleDefaults = config('gcss.cards.icon_circle_defaults', []);
@@ -107,21 +101,19 @@ class VisualCard extends Component
                 $iconCircleDefaults['rounded'] ?? 'rounded-full',
                 $iconCircleDefaults['shadow'] ?? 'shadow-md',
                 $iconCircleDefaults['border'] ?? '',
-                'flex items-center justify-center', // Para centrar el ícono dentro del círculo
+                'flex items-center justify-center',
             ]);
 
-            // Añadir clases de posición si se especifica iconCirclePosition
             if ($this->iconCirclePosition) {
                 $positionClasses = config('gcss.cards.icon_circle_positions.' . $this->iconCirclePosition, '');
                 $iconCircleClasses .= ' ' . $positionClasses;
             }
         }
 
-
         return view('gcss::components.visual-card', [
             'classes' => $classes,
             'inlineStyle' => $inlineStyle,
-            'iconCircleClasses' => $iconCircleClasses, // Pasar las clases del círculo del ícono a la vista
+            'iconCircleClasses' => $iconCircleClasses,
         ]);
     }
 }

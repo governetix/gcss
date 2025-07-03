@@ -47,19 +47,16 @@ class VisualInfoBox extends Component
         $this->type = $type ?? config('gcss.info_boxes.default_type', 'info');
         $this->title = $title;
 
-        // Obtener configuraciones de tipo por defecto
         $typeConfig = config('gcss.info_boxes.types.' . $this->type, []);
 
-        // Asignar propiedades, priorizando las pasadas directamente, luego las del tipo, luego las generales por defecto
         $this->padding = $padding ?? config('gcss.info_boxes.default_padding', 'p-4');
         $this->rounded = $rounded ?? config('gcss.info_boxes.default_rounded', 'rounded-md');
         $this->shadow = $shadow ?? config('gcss.info_boxes.default_shadow', 'shadow-sm');
 
         $this->bgColor = $bgColor ?? ($typeConfig['bg'] ?? '');
-        $this->textColor = $textColor ?? ($typeConfig['text'] ?? '');
+        $this->textColor = $textColor ?? ($typeConfig['text'] ?? config('gcss.typography.default_text_color', 'text-gray-900'));
         $this->borderColor = $borderColor ?? ($typeConfig['border'] ?? '');
 
-        // Ícono y color del ícono
         $this->icon = $icon ?? ($typeConfig['icon'] ?? '');
         $this->iconColor = $iconColor ?? ($typeConfig['icon_color'] ?? '');
     }
@@ -78,7 +75,7 @@ class VisualInfoBox extends Component
             $this->bgColor,
             $this->textColor,
             $this->borderColor,
-            'flex items-start', // Para alinear ícono y contenido
+            'flex items-start',
         ]);
 
         return view('gcss::components.visual-info-box', ['classes' => $classes]);

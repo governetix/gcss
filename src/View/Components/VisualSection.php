@@ -11,7 +11,7 @@ class VisualSection extends Component
     public $textColor;
     public $shadow;
     public $rounded;
-    public $fullWidth; // Si la sección debe ocupar el 100% del ancho sin max-width
+    public $fullWidth;
 
     /**
      * Create a new component instance.
@@ -32,10 +32,9 @@ class VisualSection extends Component
         $rounded = null,
         $fullWidth = null
     ) {
-        // Obtener valores por defecto de la configuración
         $this->padding = $padding ?? config('gcss.sections.default_padding', 'py-12 px-4 sm:px-6 lg:px-8');
         $this->bgColor = $bgColor ?? config('gcss.sections.default_bg_color', 'bg-white');
-        $this->textColor = $textColor ?? config('gcss.sections.default_text_color', 'text-gray-900');
+        $this->textColor = $textColor ?? config('gcss.typography.default_text_color', 'text-gray-900');
         $this->shadow = $shadow ?? config('gcss.sections.default_shadow', '');
         $this->rounded = $rounded ?? config('gcss.sections.default_rounded', '');
         $this->fullWidth = $fullWidth ?? config('gcss.sections.default_full_width', false);
@@ -48,7 +47,6 @@ class VisualSection extends Component
      */
     public function render()
     {
-        // Clases base para la sección
         $baseClasses = [
             $this->padding,
             $this->bgColor,
@@ -57,7 +55,6 @@ class VisualSection extends Component
             $this->rounded,
         ];
 
-        // Si no es de ancho completo, añadir clases para centrar y limitar ancho
         if (!$this->fullWidth) {
             $baseClasses[] = 'max-w-7xl mx-auto';
         }

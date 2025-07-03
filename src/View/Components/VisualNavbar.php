@@ -15,7 +15,7 @@ class VisualNavbar extends Component
     public $linkHoverTextColor;
     public $linkPadding;
     public $linkRounded;
-    public $links; // Nuevo: Array de enlaces para la navegación
+    public $links;
 
     /**
      * Create a new component instance.
@@ -42,10 +42,10 @@ class VisualNavbar extends Component
         $linkHoverTextColor = null,
         $linkPadding = null,
         $linkRounded = null,
-        $links = [] // Inicializamos como un array vacío por defecto
+        $links = []
     ) {
         $this->bgColor = $bgColor ?? config('gcss.navbar.default_bg_color', 'bg-white');
-        $this->textColor = $textColor ?? config('gcss.navbar.default_text_color', 'text-gray-900');
+        $this->textColor = $textColor ?? config('gcss.typography.default_text_color', 'text-gray-900');
         $this->padding = $padding ?? config('gcss.navbar.default_padding', 'py-4 px-4 sm:px-6 lg:px-8');
         $this->shadow = $shadow ?? config('gcss.navbar.default_shadow', 'shadow-md');
         $this->height = $height ?? config('gcss.navbar.default_height', 'h-16');
@@ -64,8 +64,8 @@ class VisualNavbar extends Component
     public function render()
     {
         $classes = implode(' ', [
-            'flex items-center justify-between', // Flexbox para alinear elementos
-            'w-full fixed top-0 z-40', // Fijo en la parte superior, z-index alto
+            'flex items-center justify-between',
+            'w-full fixed top-0 z-40',
             $this->bgColor,
             $this->textColor,
             $this->padding,
@@ -73,7 +73,6 @@ class VisualNavbar extends Component
             $this->height,
         ]);
 
-        // Clases para los enlaces internos del navbar
         $internalLinkClasses = implode(' ', [
             $this->linkTextColor,
             $this->linkHoverTextColor,
@@ -85,7 +84,7 @@ class VisualNavbar extends Component
 
         return view('gcss::components.visual-navbar', [
             'classes' => $classes,
-            'linkClasses' => $internalLinkClasses, // Ahora pasamos estas clases a la vista para que las use internamente
+            'linkClasses' => $internalLinkClasses,
         ]);
     }
 }

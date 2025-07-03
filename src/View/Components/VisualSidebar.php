@@ -17,7 +17,7 @@ class VisualSidebar extends Component
     public $linkPadding;
     public $linkRounded;
     public $fixed;
-    public $links; // Nuevo: Array de enlaces para el sidebar
+    public $links;
 
     /**
      * Create a new component instance.
@@ -48,10 +48,10 @@ class VisualSidebar extends Component
         $linkPadding = null,
         $linkRounded = null,
         $fixed = false,
-        $links = [] // Inicializamos como un array vacío por defecto
+        $links = []
     ) {
         $this->bgColor = $bgColor ?? config('gcss.sidebar.default_bg_color', 'bg-gray-800');
-        $this->textColor = $textColor ?? config('gcss.sidebar.default_text_color', 'text-white');
+        $this->textColor = $textColor ?? config('gcss.typography.default_text_color', 'text-white');
         $this->width = $width ?? config('gcss.sidebar.default_width', 'w-64');
         $this->padding = $padding ?? config('gcss.sidebar.default_padding', 'py-4 px-3');
         $this->shadow = $shadow ?? config('gcss.sidebar.default_shadow', 'shadow-lg');
@@ -77,13 +77,12 @@ class VisualSidebar extends Component
             $this->width,
             $this->padding,
             $this->shadow,
-            'flex flex-col', // Para que los elementos internos se apilen verticalmente
-            $this->fixed ? 'fixed top-0 left-0 h-full z-30' : '', // Posicionamiento fixed si se indica
+            'flex flex-col',
+            $this->fixed ? 'fixed top-0 left-0 h-full z-30' : '',
         ]);
 
-        // Clases para los enlaces internos del sidebar
         $internalLinkClasses = implode(' ', [
-            'flex items-center', // Para íconos y texto
+            'flex items-center',
             $this->linkTextColor,
             $this->linkHoverBg,
             $this->linkHoverTextColor,
@@ -95,7 +94,7 @@ class VisualSidebar extends Component
 
         return view('gcss::components.visual-sidebar', [
             'classes' => $classes,
-            'linkClasses' => $internalLinkClasses, // Pasamos estas clases a la vista para que las use internamente
+            'linkClasses' => $internalLinkClasses,
         ]);
     }
 }

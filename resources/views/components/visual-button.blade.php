@@ -9,4 +9,3 @@
     {{-- Si se pasa texto como prop, úsalo. Si no, usa el slot. Si no hay ninguno, usa la traducción por defecto. --}}
     {{ $text ?? ($slot->isNotEmpty() ? $slot : __('gcss::button_default_text')) }}
 </button>
-
