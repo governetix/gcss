@@ -3,99 +3,33 @@
 namespace Governetix\Gcss\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\View\ComponentAttributeBag; // Asegúrate de que esta línea esté aquí
 
 class VisualSidebar extends Component
 {
-    public $bgColor;
-    public $textColor;
-    public $width;
-    public $padding;
-    public $shadow;
-    public $linkTextColor;
-    public $linkHoverBg;
-    public $linkHoverTextColor;
-    public $linkPadding;
-    public $linkRounded;
-    public $fixed;
-    public $links;
+    public $class;
+    // Agrega la propiedad para los atributos
+    public $attributes; // Esta línea es nueva, para declarar la propiedad
 
-    /**
-     * Create a new component instance.
-     *
-     * @param string $bgColor Clases de Tailwind para el color de fondo.
-     * @param string $textColor Clases de Tailwind para el color del texto.
-     * @param string $width Clases de Tailwind para el ancho del sidebar.
-     * @param string $padding Clases de Tailwind para el padding.
-     * @param string $shadow Clases de Tailwind para la sombra.
-     * @param string $linkTextColor Clases de Tailwind para el color del texto de los enlaces.
-     * @param string $linkHoverBg Clases de Tailwind para el color de fondo al pasar el mouse por los enlaces.
-     * @param string $linkHoverTextColor Clases de Tailwind para el color del texto de los enlaces al pasar el mouse.
-     * @param string $linkPadding Clases de Tailwind para el padding de los enlaces.
-     * @param string $linkRounded Clases de Tailwind para el redondeo de los enlaces.
-     * @param bool $fixed Si el sidebar debe ser fixed (útil para toggles móviles).
-     * @param array $links Array de enlaces para el sidebar (ej. [['url' => '/', 'text' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt']]).
-     * @return void
-     */
-    public function __construct(
-        $bgColor = null,
-        $textColor = null,
-        $width = null,
-        $padding = null,
-        $shadow = null,
-        $linkTextColor = null,
-        $linkHoverBg = null,
-        $linkHoverTextColor = null,
-        $linkPadding = null,
-        $linkRounded = null,
-        $fixed = false,
-        $links = []
-    ) {
-        $this->bgColor = $bgColor ?? config('gcss.sidebar.default_bg_color', 'bg-gray-800');
-        $this->textColor = $textColor ?? config('gcss.typography.default_text_color', 'text-white');
-        $this->width = $width ?? config('gcss.sidebar.default_width', 'w-64');
-        $this->padding = $padding ?? config('gcss.sidebar.default_padding', 'py-4 px-3');
-        $this->shadow = $shadow ?? config('gcss.sidebar.default_shadow', 'shadow-lg');
-        $this->linkTextColor = $linkTextColor ?? config('gcss.sidebar.default_link_text_color', 'text-gray-300');
-        $this->linkHoverBg = $linkHoverBg ?? config('gcss.sidebar.default_link_hover_bg', 'hover:bg-gray-700');
-        $this->linkHoverTextColor = $linkHoverTextColor ?? config('gcss.sidebar.default_link_hover_text_color', 'hover:text-white');
-        $this->linkPadding = $linkPadding ?? config('gcss.sidebar.default_link_padding', 'py-2 px-3');
-        $this->linkRounded = $linkRounded ?? config('gcss.sidebar.default_link_rounded', 'rounded-md');
-        $this->fixed = $fixed;
-        $this->links = $links;
+    public function __construct($class = '')
+    {
+        $this->class = (string) $class;
+
+        // ¡Esta es la inicialización defensiva que faltaba!
+        // Asegura que $this->attributes siempre sea un ComponentAttributeBag
+        if (!($this->attributes instanceof ComponentAttributeBag)) {
+            $this->attributes = new ComponentAttributeBag();
+        }
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\Contracts\View\View|\Closure|string
-     */
     public function render()
     {
-        $classes = implode(' ', [
-            $this->bgColor,
-            $this->textColor,
-            $this->width,
-            $this->padding,
-            $this->shadow,
-            'flex flex-col',
-            $this->fixed ? 'fixed top-0 left-0 h-full z-30' : '',
-        ]);
-
-        $internalLinkClasses = implode(' ', [
-            'flex items-center',
-            $this->linkTextColor,
-            $this->linkHoverBg,
-            $this->linkHoverTextColor,
-            $this->linkPadding,
-            $this->linkRounded,
-            'font-medium',
-            'transition-colors duration-200',
-        ]);
-
+        // El Blade ya maneja la fusión de atributos.
+        // Aquí pasamos la clase que ya procesamos y los atributos tal cual.
         return view('gcss::components.visual-sidebar', [
-            'classes' => $classes,
-            'linkClasses' => $internalLinkClasses,
+            'class' => $this->class,
+            // Pasamos $this->attributes a la vista, excluyendo 'class' para evitar duplicidad si $class ya está ahí.
+            'attributes' => $this->attributes->except(['class', 'links']), 
         ]);
     }
 }
-

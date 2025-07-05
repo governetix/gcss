@@ -7,78 +7,34 @@ use Illuminate\View\Component;
 class VisualInfoBox extends Component
 {
     public $type;
-    public $title;
     public $icon;
+    public $title;
     public $iconColor;
-    public $padding;
-    public $rounded;
-    public $shadow;
-    public $bgColor;
-    public $textColor;
-    public $borderColor;
 
-    /**
-     * Create a new component instance.
-     *
-     * @param string $type Tipo de la caja de información ('info', 'success', 'warning', 'danger').
-     * @param string $title Título opcional de la caja.
-     * @param string $icon Clase del ícono opcional (ej. 'fas fa-lightbulb'). Si no se especifica, usa el ícono por defecto del tipo.
-     * @param string $iconColor Color del ícono opcional (ej. 'text-purple-500'). Si no se especifica, usa el color por defecto del tipo.
-     * @param string $padding Clases de Tailwind para el padding.
-     * @param string $rounded Clases de Tailwind para el radio de borde.
-     * @param string $shadow Clases de Tailwind para la sombra.
-     * @param string $bgColor Clases de Tailwind para el color de fondo.
-     * @param string $textColor Clases de Tailwind para el color del texto.
-     * @param string $borderColor Clases de Tailwind para el color del borde.
-     * @return void
-     */
     public function __construct(
-        $type = null,
-        $title = null,
+        $type = 'info',
         $icon = null,
-        $iconColor = null,
-        $padding = null,
-        $rounded = null,
-        $shadow = null,
-        $bgColor = null,
-        $textColor = null,
-        $borderColor = null
+        $title = null,
+        $iconColor = ''
     ) {
-        $this->type = $type ?? config('gcss.info_boxes.default_type', 'info');
+        $this->type = $type;
+        $this->icon = $icon;
         $this->title = $title;
-
-        $typeConfig = config('gcss.info_boxes.types.' . $this->type, []);
-
-        $this->padding = $padding ?? config('gcss.info_boxes.default_padding', 'p-4');
-        $this->rounded = $rounded ?? config('gcss.info_boxes.default_rounded', 'rounded-md');
-        $this->shadow = $shadow ?? config('gcss.info_boxes.default_shadow', 'shadow-sm');
-
-        $this->bgColor = $bgColor ?? ($typeConfig['bg'] ?? '');
-        $this->textColor = $textColor ?? ($typeConfig['text'] ?? config('gcss.typography.default_text_color', 'text-gray-900'));
-        $this->borderColor = $borderColor ?? ($typeConfig['border'] ?? '');
-
-        $this->icon = $icon ?? ($typeConfig['icon'] ?? '');
-        $this->iconColor = $iconColor ?? ($typeConfig['icon_color'] ?? '');
+        $this->iconColor = $iconColor;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\Contracts\View\View|\Closure|string
-     */
     public function render()
     {
-        $classes = implode(' ', [
-            $this->padding,
-            $this->rounded,
-            $this->shadow,
-            $this->bgColor,
-            $this->textColor,
-            $this->borderColor,
-            'flex items-start',
-        ]);
+        $baseClasses = 'flex items-start p-4 rounded-lg';
+        $typeClasses = [
+            'info' => 'bg-blue-100 text-blue-800',
+            'success' => 'bg-green-100 text-green-800',
+            'warning' => 'bg-yellow-100 text-yellow-800',
+            'danger' => 'bg-red-100 text-red-800',
+        ];
 
-        return view('gcss::components.visual-info-box', ['classes' => $classes]);
+        $classes = $baseClasses . ' ' . ($typeClasses[$this->type] ?? $typeClasses['info']);
+
+        return view('gcss::components.visual-info-box', compact('classes'));
     }
 }
-

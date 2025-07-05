@@ -6,7 +6,7 @@ use Governetix\Gcss\Models\GcssSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'web'], function () {
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['web']], function () {
     // Ruta para el dashboard principal del sistema de diseño
     Route::get('/styles', function () {
         $components = [
@@ -23,21 +23,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'web'], fun
 
     // Ruta para guardar la configuración del sistema de diseño
     Route::post('/styles/save', function (Request $request) {
-        $settingsToSave = $request->except('_token');
+        $settingsToSave = Arr::dot($request->except('_token'));
 
-        $flattenedSettings = Arr::dot($settingsToSave);
-
-        foreach ($flattenedSettings as $key => $value) {
-            // Guardar el valor directamente. El frontend ya envía la clase Tailwind.
-            $valueToStore = is_array($value) ? json_encode($value) : $value;
-
+        foreach ($settingsToSave as $key => $value) {
             GcssSetting::updateOrCreate(
                 ['key' => $key],
-                ['value' => $valueToStore]
+                ['value' => $value]
             );
         }
 
-        // Limpiar la caché de configuración para que los cambios se reflejen inmediatamente
         \Artisan::call('config:clear');
 
         return redirect()->route('admin.styles')->with('success', 'Configuración guardada exitosamente.');

@@ -154,7 +154,7 @@ class VisualButton extends Component
 
         // Obtener clases de tamaño y redondeo
         $sizeClasses = config("gcss.buttons.sizes.{$this->size}", '');
-        $roundedClasses = $this->rounded; // Ya es una clase de Tailwind
+        $roundedClasses = "rounded-{$this->rounded}"; // Ya es una clase de Tailwind
 
         // Por defecto, usar las propiedades directas (útil para el dashboard)
         $dynamicClasses = [
@@ -197,11 +197,11 @@ class VisualButton extends Component
         }
 
 
-        $classes = implode(' ', array_filter(array_merge(
+        $classes = trim(implode(' ', array_filter(array_merge(
             $baseCommonClasses,
             [$sizeClasses, $roundedClasses],
-            $dynamicClasses
-        )));
+            collect($dynamicClasses)->flatten()->all()
+        ))));
 
         return view('gcss::components.visual-button', ['classes' => $classes]);
     }

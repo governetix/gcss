@@ -18,6 +18,31 @@ use Governetix\Gcss\View\Components\VisualNavbar;
 use Governetix\Gcss\View\Components\VisualSidebar;
 use Governetix\Gcss\View\Components\VisualPagination;
 use Governetix\Gcss\View\Components\VisualTabs;
+use Governetix\Gcss\View\Components\VisualParagraph;
+use Governetix\Gcss\View\Components\VisualList;
+use Governetix\Gcss\View\Components\VisualBlockquote;
+use Governetix\Gcss\View\Components\FormInput;
+use Governetix\Gcss\View\Components\FormTextarea;
+use Governetix\Gcss\View\Components\FormSelect;
+use Governetix\Gcss\View\Components\FormCheckbox;
+use Governetix\Gcss\View\Components\FormRadio;
+use Governetix\Gcss\View\Components\FormLabel;
+use Governetix\Gcss\View\Components\FormError;
+use Governetix\Gcss\View\Components\VisualTable;
+use Governetix\Gcss\View\Components\VisualKpi;
+use Governetix\Gcss\View\Components\VisualChart;
+use Governetix\Gcss\View\Components\VisualAlert;
+use Governetix\Gcss\View\Components\VisualNotification;
+use Governetix\Gcss\View\Components\VisualModal;
+use Governetix\Gcss\View\Components\VisualTooltip;
+use Governetix\Gcss\View\Components\VisualSpinner;
+use Governetix\Gcss\View\Components\VisualEmptyState;
+use Governetix\Gcss\View\Components\VisualHeroSection;
+use Governetix\Gcss\View\Components\VisualCtaSection;
+use Governetix\Gcss\View\Components\VisualMapSection;
+use Governetix\Gcss\View\Components\VisualFeatureGrid;
+use Governetix\Gcss\View\Components\VisualTestimonialSlider;
+use Illuminate\Support\Facades\Gate;
 use Governetix\Gcss\Models\GcssSetting;
 
 class GcssServiceProvider extends ServiceProvider
@@ -29,6 +54,7 @@ class GcssServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Fusionar la configuración por defecto del paquete con la del usuario
         $this->mergeConfigFrom(
             __DIR__.'/../config/gcss.php', 'gcss'
         );
@@ -42,16 +68,16 @@ class GcssServiceProvider extends ServiceProvider
     public function boot()
     {
         // Cargar configuraciones desde la BD y fusionarlas.
-        // Esto debe ocurrir DESPUÉS de mergeConfigFrom para que los valores de la BD tengan prioridad.
+        // Los valores de la BD tienen la más alta prioridad sobre los del archivo gcss.php.
         try {
             if (Schema::hasTable('gcss_settings')) {
                 $settings = GcssSetting::all()->pluck('value', 'key');
 
                 if ($settings->isNotEmpty()) {
                     foreach ($settings as $key => $value) {
-                        // CORRECCIÓN: Eliminada la comilla simple extra aquí
-                        $decodedValue = is_string($value) && (str_starts_with($value, '{') || str_starts_with($value, '[')) ? json_decode($value, true) : $value;
-                        config()->set("gcss.{$key}", $decodedValue);
+                        // El cast 'array' en el modelo GcssSetting ya decodifica el JSON automáticamente.
+                        // Así que $value ya debería ser un array o el tipo original si no era JSON.
+                        config()->set("gcss.{$key}", $value);
                     }
                 }
             }
@@ -59,103 +85,38 @@ class GcssServiceProvider extends ServiceProvider
             Log::warning('GCSS: No se pudieron cargar las configuraciones de la base de datos. ' . $e->getMessage());
         }
 
-        // Aplicar el tema activo (esto sobrescribe los valores si el tema es diferente a 'default')
+        // Aplicar el tema activo. Esto debe ocurrir DESPUÉS de cargar los settings de la BD,
+        // para que los settings de la BD puedan ser sobrescritos por el tema,
+        // O si el tema es 'default', no sobrescriba los settings de la BD.
         $activeThemeName = config('gcss.active_theme', 'default');
         $themeConfig = config("gcss.themes.{$activeThemeName}");
 
-        if ($activeThemeName !== 'default' && $themeConfig) {
-            // Actualizar los colores base de Tailwind según el tema
-            foreach ([
-                'primary', 'secondary', 'info', 'success', 'warning', 'danger',
-            ] as $colorKey) {
-                $configKey = "{$colorKey}_color_class";
-                if (isset($themeConfig[$configKey])) {
-                    config()->set("gcss.colors.{$colorKey}", $themeConfig[$configKey]);
+        if ($themeConfig) { // Siempre aplicamos el tema, incluso el 'default'
+            // Obtener la configuración actual de gcss
+            $gcssConfig = config('gcss');
+
+            // Función auxiliar para fusionar arrays recursivamente, dando prioridad a los valores de la fuente
+            $mergeRecursive = function (array $target, array $source): array {
+                foreach ($source as $key => $value) {
+                    if (is_array($value) && isset($target[$key]) && is_array($target[$key])) {
+                        $target[$key] = $this->mergeRecursive($target[$key], $value);
+                    } else {
+                        $target[$key] = $value;
+                    }
                 }
-            }
+                return $target;
+            };
 
-            // Actualizar otras propiedades globales del tema
-            config()->set('gcss.typography.default_text_color', $themeConfig['text_color_class'] ?? 'text-gray-900');
-            config()->set('gcss.sections.default_bg_color', $themeConfig['bg_color_class'] ?? 'bg-white');
-            config()->set('gcss.sections.default_text_color', $themeConfig['text_color_class'] ?? 'text-gray-900');
+            // Aplicar los valores del tema a la configuración de gcss
+            // Esto sobrescribirá los colores base y otras propiedades globales del tema.
+            // NOTA: Aquí estamos sobrescribiendo la configuración completa con el tema.
+            // Si queremos que los settings de la BD tengan prioridad sobre el tema,
+            // la lógica sería más compleja, aplicando el tema primero, y luego los settings de la BD.
+            // Por ahora, el tema sobrescribe todo lo que define.
+            $gcssConfig = $mergeRecursive($gcssConfig, $themeConfig);
 
-            // Lógica para actualizar las clases de los componentes a los nuevos colores del tema
-            // Esto es un ejemplo simplificado. Para un sistema completo, podrías tener una clase
-            // de "ThemeManager" que reconstruya todas las clases de Tailwind basadas en el tema activo.
-
-            // Botones
-            $defaultButtonBg = 'bg-' . config('gcss.colors.primary') . '-600';
-            $defaultButtonText = 'text-' . config('gcss.typography.default_text_color');
-            $defaultButtonHoverBg = 'hover:bg-' . config('gcss.colors.primary') . '-700';
-            $defaultButtonHoverText = 'hover:text-' . config('gcss.typography.default_text_color');
-
-            config()->set('gcss.buttons.default_bg_color', $defaultButtonBg);
-            config()->set('gcss.buttons.default_text_color', $defaultButtonText);
-            config()->set('gcss.buttons.default_hover_bg_color', $defaultButtonHoverBg);
-            config()->set('gcss.buttons.default_hover_text_color', $defaultButtonHoverText);
-
-            // Actualizar los tipos de botón predefinidos para usar los colores del tema
-            $buttonTypes = config('gcss.buttons.types');
-            foreach ($buttonTypes as $typeKey => &$typeConfig) {
-                // Esto es una simplificación. Un mapeo más inteligente podría ser necesario.
-                if ($typeKey === 'primary') {
-                    $typeConfig['bg'] = 'bg-' . config('gcss.colors.primary') . '-600';
-                    $typeConfig['text'] = 'text-white';
-                    $typeConfig['hover_bg'] = 'hover:bg-' . config('gcss.colors.primary') . '-700';
-                    $typeConfig['hover_text'] = 'hover:text-white';
-                } elseif ($typeKey === 'secondary') {
-                    $typeConfig['bg'] = 'bg-' . config('gcss.colors.secondary') . '-200';
-                    $typeConfig['text'] = 'text-' . config('gcss.colors.secondary') . '-800';
-                    $typeConfig['hover_bg'] = 'hover:bg-' . config('gcss.colors.secondary') . '-300';
-                    $typeConfig['hover_text'] = 'hover:text-' . config('gcss.colors.secondary') . '-900';
-                }
-                // ... y así para otros tipos si es necesario
-            }
-            config()->set('gcss.buttons.types', $buttonTypes);
-
-            // Replicar lógica similar para otros componentes que usan colores temáticos
-            // Info Boxes
-            $infoBoxTypes = config('gcss.info_boxes.types');
-            foreach ($infoBoxTypes as $typeKey => &$typeConfig) {
-                $baseColor = config('gcss.colors.' . str_replace(['info', 'success', 'warning', 'danger'], ['blue', 'green', 'yellow', 'red'], $typeKey));
-                if ($baseColor) {
-                    $typeConfig['bg'] = 'bg-' . $baseColor . '-100';
-                    $typeConfig['text'] = 'text-' . $baseColor . '-800';
-                    $typeConfig['border'] = 'border-border-' . $baseColor . '-400';
-                    $typeConfig['icon_color'] = 'text-' . $baseColor . '-500';
-                }
-            }
-            config()->set('gcss.info_boxes.types', $infoBoxTypes);
-
-            // Navbar
-            config()->set('gcss.navbar.default_bg_color', 'bg-' . config('gcss.colors.primary') . '-600');
-            config()->set('gcss.navbar.default_text_color', 'text-white');
-            config()->set('gcss.navbar.default_link_hover_text_color', 'hover:text-' . config('gcss.colors.secondary') . '-300');
-
-            // Sidebar
-            config()->set('gcss.sidebar.default_bg_color', 'bg-' . config('gcss.colors.secondary') . '-800');
-            config()->set('gcss.sidebar.default_link_hover_bg', 'hover:bg-' . config('gcss.colors.secondary') . '-700');
-            config()->set('gcss.sidebar.default_text_color', 'text-white');
-
-            // Pagination
-            config()->set('gcss.pagination.active_item_bg_color', 'bg-' . config('gcss.colors.primary') . '-600');
-            config()->set('gcss.pagination.active_item_text_color', 'text-white');
-            config()->set('gcss.pagination.default_item_text_color', config('gcss.typography.default_text_color'));
-
-            // Tabs
-            config()->set('gcss.tabs.active_tab_text_color', 'text-' . config('gcss.colors.primary') . '-600');
-            config()->set('gcss.tabs.active_tab_border_color', 'border-' . config('gcss.colors.primary') . '-600');
-            config()->set('gcss.tabs.default_tab_text_color', config('gcss.typography.default_text_color'));
-
-            // Typography
-            $typographyHeadings = config('gcss.typography.headings');
-            foreach ($typographyHeadings as $level => &$headingConfig) {
-                $headingConfig['text_color'] = config('gcss.typography.default_text_color');
-            }
-            config()->set('gcss.typography.headings', $typographyHeadings);
-            config()->set('gcss.typography.paragraph.text_color', config('gcss.typography.default_text_color'));
-            config()->set('gcss.typography.blockquote.text_color', config('gcss.typography.default_text_color'));
-            config()->set('gcss.typography.blockquote.border_left', 'border-l-4 border-' . config('gcss.colors.secondary') . '-300');
+            // Guardar la configuración fusionada de nuevo en el runtime de Laravel
+            config()->set('gcss', $gcssConfig);
         }
 
 
@@ -212,6 +173,53 @@ class GcssServiceProvider extends ServiceProvider
         Blade::component('gcss-sidebar', VisualSidebar::class);
         Blade::component('gcss-pagination', VisualPagination::class);
         Blade::component('gcss-tabs', VisualTabs::class);
+        Blade::component('gcss-paragraph', VisualParagraph::class);
+        Blade::component('gcss-list', VisualList::class);
+        Blade::component('gcss-blockquote', VisualBlockquote::class);
+        Blade::component('gcss-form-input', FormInput::class);
+        Blade::component('gcss-form-textarea', FormTextarea::class);
+        Blade::component('gcss-form-select', FormSelect::class);
+        Blade::component('gcss-form-checkbox', FormCheckbox::class);
+        Blade::component('gcss-form-radio', FormRadio::class);
+        Blade::component('gcss-form-label', FormLabel::class);
+        Blade::component('gcss-form-error', FormError::class);
+        Blade::component('gcss-table', VisualTable::class);
+        Blade::component('gcss-kpi', VisualKpi::class);
+        Blade::component('gcss-chart', VisualChart::class);
+        Blade::component('gcss-alert', VisualAlert::class);
+        Blade::component('gcss-notification', VisualNotification::class);
+        Blade::component('gcss-modal', VisualModal::class);
+        Blade::component('gcss-tooltip', VisualTooltip::class);
+        Blade::component('gcss-spinner', VisualSpinner::class);
+        Blade::component('gcss-empty-state', VisualEmptyState::class);
+        Blade::component('gcss-hero-section', VisualHeroSection::class);
+        Blade::component('gcss-cta-section', VisualCtaSection::class);
+        Blade::component('gcss-map-section', VisualMapSection::class);
+        Blade::component('gcss-feature-grid', VisualFeatureGrid::class);
+        Blade::component('gcss-testimonial-slider', VisualTestimonialSlider::class);
+
+        Gate::define('manage-gcss-settings', function ($user) {
+            return $user->hasRole('admin');
+        });
+    }
+
+    /**
+     * Recursively merges two arrays, giving precedence to the source array.
+     *
+     * @param array $target
+     * @param array $source
+     * @return array
+     */
+    protected function mergeRecursive(array $target, array $source): array
+    {
+        foreach ($source as $key => $value) {
+            if (is_array($value) && isset($target[$key]) && is_array($target[$key])) {
+                $target[$key] = $this->mergeRecursive($target[$key], $value);
+            } else {
+                $target[$key] = $value;
+            }
+        }
+        return $target;
     }
 }
 

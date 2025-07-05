@@ -1,1 +1,1 @@
-// JS del paquete gcss
+import './themes.js';

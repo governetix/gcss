@@ -87,7 +87,7 @@ class VisualCard extends Component
             $baseClasses[] = 'min-h-[150px]';
         }
 
-        $classes = implode(' ', $baseClasses);
+        $classes = implode(' ', array_filter($baseClasses));
 
         $inlineStyle = $this->bgImage ? "background-image: url('{$this->bgImage}');" : '';
 

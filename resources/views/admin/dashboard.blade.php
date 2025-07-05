@@ -6,7 +6,7 @@
     <title>GCSS Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -29,7 +29,7 @@
                     <x-gcss-heading level="2" class="mb-4">Configuración General (Tipografía y Temas)</x-gcss-heading>
 
                     <form action="{{ route('admin.save-gcss-settings') }}" method="POST" x-data="{
-                        activeTheme: '{{ config('gcss.active_theme') }}'
+                        activeTheme: '{{ config('gcss.active_theme') ?? 'default' }}'
                     }">
                         @csrf
                         <div class="mb-6">
@@ -76,7 +76,7 @@
                                     $baseBgClass = $themeConfig['bg_color_class'] ?? 'bg-white';
                                     $baseTextColorClass = $themeConfig['text_color_class'] ?? 'text-gray-900';
                                     $darkBgClass = $themeConfig['dark_mode_bg_class'] ?? 'bg-gray-900';
-                                    $darkTextColorClass = $themeConfig['dark_mode_text_class'] ?? 'text-gray-100';
+                                    $darkTextColorClass = 'text-gray-100'; // Default for dark mode text
                                 @endphp
                                 <div class="w-16 h-16 {{ $baseBgClass }} {{ $baseTextColorClass }} flex items-center justify-center rounded-md text-xs border border-gray-200">
                                     Base BG
@@ -126,18 +126,18 @@
                             },
 
                             // Inicializar valores de Alpine.js con los valores actuales de la configuración
-                            buttonType: '{{ config('gcss.components.gcss-visual-button.type', 'primary') }}',
-                            buttonSize: '{{ config('gcss.components.gcss-visual-button.size', 'md') }}',
-                            buttonRounded: '{{ config('gcss.components.gcss-visual-button.rounded', 'rounded-md') }}',
-                            buttonBgColor: '{{ config('gcss.components.gcss-visual-button.bg_color', 'bg-blue-600') }}',
-                            buttonTextColor: '{{ config('gcss.components.gcss-visual-button.text_color', 'text-white') }}',
-                            buttonBorderWidth: '{{ config('gcss.components.gcss-visual-button.border_width', 'border-0') }}',
-                            buttonBorderStyle: '{{ config('gcss.components.gcss-visual-button.border_style', 'border-solid') }}',
-                            buttonBorderColor: '{{ config('gcss.components.gcss-visual-button.border_color', 'border-transparent') }}',
-                            buttonShadow: '{{ config('gcss.components.gcss-visual-button.shadow', 'shadow-md') }}',
-                            buttonHoverBgColor: '{{ config('gcss.components.gcss-visual-button.hover_bg_color', 'hover:bg-blue-700') }}',
-                            buttonHoverTextColor: '{{ config('gcss.components.gcss-visual-button.hover_text_color', 'hover:text-white') }}',
-                            buttonHoverBorderColor: '{{ config('gcss.components.gcss-visual-button.hover_border_color', 'hover:border-transparent') }}',
+                            buttonType: '{{ config('gcss.components.gcss-visual-button.type') ?? 'primary' }}',
+                            buttonSize: '{{ config('gcss.components.gcss-visual-button.size') ?? 'md' }}',
+                            buttonRounded: '{{ config('gcss.components.gcss-visual-button.rounded') ?? 'rounded-md' }}',
+                            buttonBgColor: '{{ config('gcss.components.gcss-visual-button.bg_color') ?? 'bg-blue-600' }}',
+                            buttonTextColor: '{{ config('gcss.components.gcss-visual-button.text_color') ?? 'text-white' }}',
+                            buttonBorderWidth: '{{ config('gcss.components.gcss-visual-button.border_width') ?? 'border-0' }}',
+                            buttonBorderStyle: '{{ config('gcss.components.gcss-visual-button.border_style') ?? 'border-solid' }}',
+                            buttonBorderColor: '{{ config('gcss.components.gcss-visual-button.border_color') ?? 'border-transparent' }}',
+                            buttonShadow: '{{ config('gcss.components.gcss-visual-button.shadow') ?? 'shadow-md' }}',
+                            buttonHoverBgColor: '{{ config('gcss.components.gcss-visual-button.hover_bg_color') ?? 'hover:bg-blue-700' }}',
+                            buttonHoverTextColor: '{{ config('gcss.components.gcss-visual-button.hover_text_color') ?? 'hover:text-white' }}',
+                            buttonHoverBorderColor: '{{ config('gcss.components.gcss-visual-button.hover_border_color') ?? 'hover:border-transparent' }}',
                             buttonText: 'Ejemplo de Botón'
                         }">
                             @csrf
@@ -171,7 +171,7 @@
                                     <label for="button-bg-color" class="block text-sm font-medium text-gray-700">Color de Fondo:</label>
                                     <select x-model="buttonBgColor" name="components.gcss-visual-button.bg_color" id="button-bg-color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                         @foreach(config('gcss.tailwind_color_classes.bg', []) as $option)
-                                            <option value="{{ $option }}" :style="`background-color: ${tailwindToHex(option)}; color: ${tailwindToHex(option).startsWith('#000') || tailwindToHex(option).startsWith('#fff') || option.includes('transparent') ? '#000' : '#fff'}`">{{ $option }}</option>
+                                            <option value="{{ $option }}" :style="`background-color: ${tailwindToHex('{{ $option }}')}; color: ${tailwindToHex('{{ $option }}').startsWith('#000') || tailwindToHex('{{ $option }}').startsWith('#fff') || '{{ $option }}'.includes('transparent') ? '#000' : '#fff'}`">{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -179,7 +179,7 @@
                                     <label for="button-text-color" class="block text-sm font-medium text-gray-700">Color de Texto:</label>
                                     <select x-model="buttonTextColor" name="components.gcss-visual-button.text_color" id="button-text-color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                         @foreach(config('gcss.tailwind_color_classes.text', []) as $option)
-                                            <option value="{{ $option }}" :style="`background-color: ${tailwindToHex(option)}; color: ${tailwindToHex(option).startsWith('#000') || tailwindToHex(option).startsWith('#fff') ? '#000' : '#fff'}`">{{ $option }}</option>
+                                            <option value="{{ $option }}" :style="`background-color: ${tailwindToHex('{{ $option }}')}; color: ${tailwindToHex('{{ $option }}').startsWith('#000') || tailwindToHex('{{ $option }}').startsWith('#fff') ? '#000' : '#fff'}`">{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -203,7 +203,7 @@
                                     <label for="button-border-color" class="block text-sm font-medium text-gray-700">Color de Borde:</label>
                                     <select x-model="buttonBorderColor" name="components.gcss-visual-button.border_color" id="button-border-color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                         @foreach(config('gcss.tailwind_color_classes.border', []) as $option)
-                                            <option value="{{ $option }}" :style="`background-color: ${tailwindToHex(option)}; color: ${tailwindToHex(option).startsWith('#000') || tailwindToHex(option).startsWith('#fff') || option.includes('transparent') ? '#000' : '#fff'}`">{{ $option }}</option>
+                                            <option value="{{ $option }}" :style="`background-color: ${tailwindToHex('{{ $option }}')}; color: ${tailwindToHex('{{ $option }}').startsWith('#000') || tailwindToHex('{{ $option }}').startsWith('#fff') || '{{ $option }}'.includes('transparent') ? '#000' : '#fff'}`">{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -220,7 +220,7 @@
                                     <label for="button-hover-bg-color" class="block text-sm font-medium text-gray-700">Hover BG Color:</label>
                                     <select x-model="buttonHoverBgColor" name="components.gcss-visual-button.hover_bg_color" id="button-hover-bg-color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                         @foreach(config('gcss.tailwind_color_classes.bg', []) as $option)
-                                            <option value="hover:{{ str_replace('bg-', '', $option) }}" :style="`background-color: ${tailwindToHex(option)}; color: ${tailwindToHex(option).startsWith('#000') || tailwindToHex(option).startsWith('#fff') || option.includes('transparent') ? '#000' : '#fff'}`">hover:{{ $option }}</option>
+                                            <option value="hover:{{ str_replace('bg-', '', $option) }}" :style="`background-color: ${tailwindToHex('{{ $option }}')}; color: ${tailwindToHex('{{ $option }}').startsWith('#000') || tailwindToHex('{{ $option }}').startsWith('#fff') || '{{ $option }}'.includes('transparent') ? '#000' : '#fff'}`">hover:{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -228,7 +228,7 @@
                                     <label for="button-hover-text-color" class="block text-sm font-medium text-gray-700">Hover Text Color:</label>
                                     <select x-model="buttonHoverTextColor" name="components.gcss-visual-button.hover_text_color" id="button-hover-text-color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                         @foreach(config('gcss.tailwind_color_classes.text', []) as $option)
-                                            <option value="hover:{{ str_replace('text-', '', $option) }}" :style="`background-color: ${tailwindToHex(option)}; color: ${tailwindToHex(option).startsWith('#000') || tailwindToHex(option).startsWith('#fff') ? '#000' : '#fff'}`">hover:{{ $option }}</option>
+                                            <option value="hover:{{ str_replace('text-', '', $option) }}" :style="`background-color: ${tailwindToHex('{{ $option }}')}; color: ${tailwindToHex('{{ $option }}').startsWith('#000') || tailwindToHex('{{ $option }}').startsWith('#fff') ? '#000' : '#fff'}`">hover:{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -236,7 +236,7 @@
                                     <label for="button-hover-border-color" class="block text-sm font-medium text-gray-700">Hover Border Color:</label>
                                     <select x-model="buttonHoverBorderColor" name="components.gcss-visual-button.hover_border_color" id="button-hover-border-color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                         @foreach(config('gcss.tailwind_color_classes.border', []) as $option)
-                                            <option value="hover:{{ str_replace('border-', '', $option) }}" :style="`background-color: ${tailwindToHex(option)}; color: ${tailwindToHex(option).startsWith('#000') || tailwindToHex(option).startsWith('#fff') || option.includes('transparent') ? '#000' : '#fff'}`">hover:{{ $option }}</option>
+                                            <option value="hover:{{ str_replace('border-', '', $option) }}" :style="`background-color: ${tailwindToHex('{{ $option }}')}; color: ${tailwindToHex('{{ $option }}').startsWith('#000') || tailwindToHex('{{ $option }}').startsWith('#fff') || '{{ $option }}'.includes('transparent') ? '#000' : '#fff'}`">hover:{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -245,26 +245,26 @@
                             <x-gcss-heading level="4" class="mb-3">Previsualización:</x-gcss-heading>
                             <div class="text-center p-4 border border-gray-200 rounded-md bg-white mb-6">
                                 <x-gcss-visual-button
-                                    ::type="buttonType"
-                                    ::size="buttonSize"
-                                    ::rounded="buttonRounded"
-                                    ::bg-color="buttonBgColor"
-                                    ::text-color="buttonTextColor"
-                                    ::border-width="buttonBorderWidth"
-                                    ::border-style="buttonBorderStyle"
-                                    ::border-color="buttonBorderColor"
-                                    ::shadow="buttonShadow"
-                                    ::hover-bg-color="buttonHoverBgColor"
-                                    ::hover-text-color="buttonHoverTextColor"
-                                    ::hover-border-color="buttonHoverBorderColor"
-                                    text="Ejemplo de Botón"
-                                    icon="fas fa-magic"
+                                    :type="buttonType"
+                                    :size="buttonSize"
+                                    :rounded="buttonRounded"
+                                    :bg-color="buttonBgColor"
+                                    :text-color="buttonTextColor"
+                                    :border-width="buttonBorderWidth"
+                                    :border-style="buttonBorderStyle"
+                                    :border-color="buttonBorderColor"
+                                    :shadow="buttonShadow"
+                                    :hover-bg-color="buttonHoverBgColor"
+                                    :hover-text-color="buttonHoverTextColor"
+                                    :hover-border-color="buttonHoverBorderColor"
+                                    text="{{ 'Ejemplo de Botón' }}"
+                                    icon="{{ 'fas fa-magic' }}"
                                 />
                             </div>
 
                             <div class="text-right">
                                 <x-gcss-visual-button type="primary" native-type="submit">
-                                    Guardar Configuración Global
+                                    Guardar Configuración de Botón
                                 </x-gcss-visual-button>
                             </div>
                         </form>
@@ -285,7 +285,7 @@
                     <p>Aquí podrás seleccionar un componente, cambiar sus opciones y ver el código para usarlo.</p>
                     <div class="bg-gray-50 p-4 rounded-md mt-4">
                         <x-gcss-heading level="3" class="mb-2">Selecciona un Componente:</x-gcss-heading>
-                        <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <select id="component-selector" name="component_selector" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                             <option value="">-- Seleccionar --</option>
                             @foreach($components as $componentName => $componentOptions)
                                 <option value="{{ $componentName }}">{{ $componentName }}</option>
@@ -327,8 +327,8 @@
                         @php
                             $baseBgClass = $themeConfig['bg_color_class'] ?? 'bg-white';
                             $baseTextColorClass = $themeConfig['text_color_class'] ?? 'text-gray-900';
-                            $darkBgClass = $themeConfig['dark_mode_bg_class'] ?? 'bg-gray-900';
-                            $darkTextColorClass = $themeConfig['dark_mode_text_class'] ?? 'text-gray-100';
+                            $darkBgClass = 'bg-gray-900'; // Default for dark mode bg
+                            $darkTextColorClass = 'text-gray-100'; // Default for dark mode text
                         @endphp
                         <div class="w-16 h-16 {{ $baseBgClass }} {{ $baseTextColorClass }} flex items-center justify-center rounded-md text-xs border border-gray-200">
                             Base BG

@@ -1,6 +1,11 @@
 {{-- resources/views/components/visual-sidebar.blade.php --}}
 
-<aside {{ $attributes->merge(['class' => $classes]) }}>
+<?php
+    $componentClass = (string) ($class ?? '');
+    $existingClass = (string) ($attributes->get('class') ?? '');
+    $combinedClass = trim($existingClass . ' ' . $componentClass);
+?>
+<aside {{ $attributes }} class="{{ $combinedClass }}">
     {{-- Slot para el logo/título del sidebar --}}
     @if(isset($header))
         <div class="mb-6">
