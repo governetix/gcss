@@ -126,18 +126,18 @@
                             },
 
                             // Inicializar valores de Alpine.js con los valores actuales de la configuración
-                            buttonType: '{{ config('gcss.components.gcss-visual-button.type') ?? 'primary' }}',
-                            buttonSize: '{{ config('gcss.components.gcss-visual-button.size') ?? 'md' }}',
-                            buttonRounded: '{{ config('gcss.components.gcss-visual-button.rounded') ?? 'rounded-md' }}',
-                            buttonBgColor: '{{ config('gcss.components.gcss-visual-button.bg_color') ?? 'bg-blue-600' }}',
-                            buttonTextColor: '{{ config('gcss.components.gcss-visual-button.text_color') ?? 'text-white' }}',
-                            buttonBorderWidth: '{{ config('gcss.components.gcss-visual-button.border_width') ?? 'border-0' }}',
-                            buttonBorderStyle: '{{ config('gcss.components.gcss-visual-button.border_style') ?? 'border-solid' }}',
-                            buttonBorderColor: '{{ config('gcss.components.gcss-visual-button.border_color') ?? 'border-transparent' }}',
-                            buttonShadow: '{{ config('gcss.components.gcss-visual-button.shadow') ?? 'shadow-md' }}',
-                            buttonHoverBgColor: '{{ config('gcss.components.gcss-visual-button.hover_bg_color') ?? 'hover:bg-blue-700' }}',
-                            buttonHoverTextColor: '{{ config('gcss.components.gcss-visual-button.hover_text_color') ?? 'hover:text-white' }}',
-                            buttonHoverBorderColor: '{{ config('gcss.components.gcss-visual-button.hover_border_color') ?? 'hover:border-transparent' }}',
+                            buttonType: {{ Js::from(config('gcss.components.gcss-visual-button.type') ?? 'primary') }},
+                            buttonSize: {{ Js::from(config('gcss.components.gcss-visual-button.size') ?? 'md') }},
+                            buttonRounded: {{ Js::from(config('gcss.components.gcss-visual-button.rounded') ?? 'rounded-md') }},
+                            buttonBgColor: {{ Js::from(config('gcss.components.gcss-visual-button.bg_color') ?? 'bg-blue-600') }},
+                            buttonTextColor: {{ Js::from(config('gcss.components.gcss-visual-button.text_color') ?? 'text-white') }},
+                            buttonBorderWidth: {{ Js::from(config('gcss.components.gcss-visual-button.border_width') ?? 'border-0') }},
+                            buttonBorderStyle: {{ Js::from(config('gcss.components.gcss-visual-button.border_style') ?? 'border-solid') }},
+                            buttonBorderColor: {{ Js::from(config('gcss.components.gcss-visual-button.border_color') ?? 'border-transparent') }},
+                            buttonShadow: {{ Js::from(config('gcss.components.gcss-visual-button.shadow') ?? 'shadow-md') }},
+                            buttonHoverBgColor: {{ Js::from(config('gcss.components.gcss-visual-button.hover_bg_color') ?? 'hover:bg-blue-700') }},
+                            buttonHoverTextColor: {{ Js::from(config('gcss.components.gcss-visual-button.hover_text_color') ?? 'hover:text-white') }},
+                            buttonHoverBorderColor: {{ Js::from(config('gcss.components.gcss-visual-button.hover_border_color') ?? 'hover:border-transparent') }},
                             buttonText: 'Ejemplo de Botón'
                         }">
                             @csrf
@@ -245,18 +245,18 @@
                             <x-gcss-heading level="4" class="mb-3">Previsualización:</x-gcss-heading>
                             <div class="text-center p-4 border border-gray-200 rounded-md bg-white mb-6">
                                 <x-gcss-visual-button
-                                    :type="buttonType"
-                                    :size="buttonSize"
-                                    :rounded="buttonRounded"
-                                    :bg-color="buttonBgColor"
-                                    :text-color="buttonTextColor"
-                                    :border-width="buttonBorderWidth"
-                                    :border-style="buttonBorderStyle"
-                                    :border-color="buttonBorderColor"
-                                    :shadow="buttonShadow"
-                                    :hover-bg-color="buttonHoverBgColor"
-                                    :hover-text-color="buttonHoverTextColor"
-                                    :hover-border-color="buttonHoverBorderColor"
+                                    :type="' + buttonType + '"
+                                    :size="' + buttonSize + '"
+                                    :rounded="' + buttonRounded + '"
+                                    :bg-color="' + buttonBgColor + '"
+                                    :text-color="' + buttonTextColor + '"
+                                    :border-width="' + buttonBorderWidth + '"
+                                    :border-style="' + buttonBorderStyle + '"
+                                    :border-color="' + buttonBorderColor + '"
+                                    :shadow="' + buttonShadow + '"
+                                    :hover-bg-color="' + buttonHoverBgColor + '"
+                                    :hover-text-color="' + buttonHoverTextColor + '"
+                                    :hover-border-color="' + buttonHoverBorderColor + '"
                                     text="{{ 'Ejemplo de Botón' }}"
                                     icon="{{ 'fas fa-magic' }}"
                                 />
@@ -352,4 +352,3 @@
     </div>
 </body>
 </html>
-

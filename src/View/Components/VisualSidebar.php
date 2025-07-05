@@ -8,15 +8,14 @@ use Illuminate\View\ComponentAttributeBag; // Asegúrate de que esta línea est�
 class VisualSidebar extends Component
 {
     public $class;
-    // Agrega la propiedad para los atributos
-    public $attributes; // Esta línea es nueva, para declarar la propiedad
+    public $links; // Añadido: Propiedad para los enlaces
+    public $attributes;
 
-    public function __construct($class = '')
+    public function __construct($class = '', $links = [])
     {
         $this->class = (string) $class;
+        $this->links = $links; // Inicializar la propiedad links
 
-        // ¡Esta es la inicialización defensiva que faltaba!
-        // Asegura que $this->attributes siempre sea un ComponentAttributeBag
         if (!($this->attributes instanceof ComponentAttributeBag)) {
             $this->attributes = new ComponentAttributeBag();
         }

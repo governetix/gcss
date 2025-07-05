@@ -1,5 +1,12 @@
-{{-- resources/views/components/visual-pagination.blade.php --}}
-
+<?php
+    $itemBaseClasses = 'relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700 leading-5 focus:z-10 focus:outline-none focus:ring ring-blue-300 focus:border-blue-300';
+    $disabledItemOpacity = 'opacity-50 cursor-not-allowed';
+    $itemHoverBg = 'hover:bg-gray-50';
+    $itemHoverText = 'hover:text-gray-700';
+    $activeItemBgColor = 'bg-blue-600';
+    $activeItemTextColor = 'text-white';
+    $urlPrefix = '#'; // Placeholder, idealmente debería ser dinámico basado en la ruta
+?>
 <nav {{ $attributes->merge(['class' => 'flex items-center ' . $alignment]) }} aria-label="Pagination">
     <div class="relative z-0 inline-flex shadow-sm -space-x-px">
         {{-- Enlace a la página anterior --}}
